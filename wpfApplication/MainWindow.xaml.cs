@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Effects;
+using OpenCvSharp;
+using Point = OpenCvSharp.Point;
 
 namespace wpfApplication
 {
@@ -22,10 +24,11 @@ namespace wpfApplication
     {
         public static int X;
         public static int Y;
-        public static string Result;
+        public static string PREResult;
         public static string ImagePath;
         public static int ImageWidth;
         public static int ImageHeight;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -105,7 +108,8 @@ namespace wpfApplication
                 {
                     using (var stream = new FileStream(openFileDialog.FileName, FileMode.Open))
                     {
-                        BitmapFrame imageFrame = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                        BitmapFrame imageFrame =
+                            BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
                         ImageWidth = imageFrame.PixelWidth;
                         ImageHeight = imageFrame.PixelHeight;
 
@@ -190,9 +194,10 @@ namespace wpfApplication
 
             }
         }
+
         private async void Button_detect_Click(object sender, RoutedEventArgs e) // асинхронный метод
         {
-            Grid_main.Effect =  new BlurEffect { Radius = 15 };
+            Grid_main.Effect = new BlurEffect { Radius = 15 };
             LoadingGif.Visibility = Visibility.Visible;
 
             string pythonScriptPath = "1.py"; // Укажите путь к вашему скрипту Python здесь
@@ -219,7 +224,7 @@ namespace wpfApplication
                         // Получение вывода Python скрипта
                         using (StreamReader reader = process.StandardOutput)
                         {
-                            Result = reader.ReadToEnd();
+                            PREResult = reader.ReadToEnd();
                         }
                     }
 
@@ -249,10 +254,9 @@ namespace wpfApplication
 
         private void Button_addToExcelFile_Click(object sender, RoutedEventArgs e)
         {
-            // Значение переменной MyGlobals.result
-            
 
-            if (Result != null)
+
+            if (PREResult != null)
             {
                 // Показываем диалоговое окно "Сохранить как"
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -268,7 +272,7 @@ namespace wpfApplication
                     {
                         using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
                         {
-                            sw.WriteLine(Result); // Запись значения в файл
+                            sw.WriteLine(PREResult); // Запись значения в файл
                         }
 
                         MessageBox.Show("Значение успешно сохранено в файл CSV.");
@@ -298,8 +302,16 @@ namespace wpfApplication
                 return;
             }
         }
+        private void ProcessImage(string ImagePath, string[] args)
+        {
+            Rendering rend = new Rendering();
+            string data = ImagePath + ',' + PREResult;
+            Mat img
+
+        }
     }
 }
+
 
 
 
