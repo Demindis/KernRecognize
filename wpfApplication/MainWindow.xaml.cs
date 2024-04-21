@@ -306,7 +306,7 @@ namespace wpfApplication
         {
             Rendering rend = new Rendering();
             string data = ImagePath + ',' + PREResult;
-            Mat img
+            Mat img;
 
         }
     }
