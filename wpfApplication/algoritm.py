@@ -6,7 +6,11 @@ from io import StringIO
 import argparse
 
 def recognize(img_path):
-    reader = easyocr.Reader(['en'], gpu=True)
+    reader = easyocr.Reader(['en'],
+                    model_storage_directory='C:/Users/Denis/.EasyOCR/model',
+                    user_network_directory='C:/Users/Denis/.EasyOCR/user_network',
+                    recog_network='custom_example', gpu=True)
+
     img = cv.imread(img_path)
     numbers = set()
     for ungle in range (0, 360, 10):
@@ -18,16 +22,10 @@ def recognize(img_path):
                 if num.count('-') == 1 and num[5] == '-':
                     if int(num[0:5]) > 10000 and int(num[0:5]) < 60000:
                         numbers.add(num)
-                        
-   # Создание CSV строки
-    csv_string = StringIO()
-    csv_writer = csv.writer(csv_string)
+    # Создание CSV строки
+    csv_data = []
     for number in numbers:
-        csv_writer.writerow([number])
-
-    # Получение CSV строки
-    csv_data = csv_string.getvalue()
-    csv_string.close()
+        csv_data.append([number])
 
     return csv_data
 
@@ -39,4 +37,7 @@ if __name__ == "__main__":
 
     # Вызов функции распознавания и генерации CSV
     csv_data = recognize(args.image_path)
-    print(csv_data)  # Вывод CSV данных в виде строки
+
+    # Вывод CSV данных в виде строк
+    for row in csv_data:
+        print(','.join(row))  # Печатаем каждую строку

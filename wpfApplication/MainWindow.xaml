@@ -81,9 +81,9 @@
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>
-
             </Border>
         </Grid>
+
         <Grid>
             <Image x:Name="LoadingGif"
                    gif:AnimationBehavior.SourceUri="loading.gif"
