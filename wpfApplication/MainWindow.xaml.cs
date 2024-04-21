@@ -1,25 +1,17 @@
 ﻿using Microsoft.Win32;
+using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Effects;
-using Microsoft.VisualBasic.FileIO;
-using wpfApplication;
-using OpenCvSharp.WpfExtensions;
-using System.Drawing;
-using System.Linq.Expressions;
-using OpenCvSharp;
-using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace wpfApplication
 {
