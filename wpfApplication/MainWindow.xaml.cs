@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,8 +13,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Effects;
+using Microsoft.VisualBasic.FileIO;
+using wpfApplication;
+using OpenCvSharp.WpfExtensions;
+using System.Drawing;
 using OpenCvSharp;
-using Point = OpenCvSharp.Point;
+using System.Windows.Input;
 
 namespace wpfApplication
 {
@@ -20,7 +26,7 @@ namespace wpfApplication
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         public static int X;
         public static int Y;
@@ -28,6 +34,7 @@ namespace wpfApplication
         public static string ImagePath;
         public static int ImageWidth;
         public static int ImageHeight;
+        public Kern[] kernArray;
 
         public MainWindow()
         {
@@ -180,20 +187,53 @@ namespace wpfApplication
 
         public void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Image image && e != null)
+            if (sender is System.Windows.Controls.Image image && e != null)
             {
 
-                Point pointsPosition = e.GetPosition(image);
+                System.Windows.Point pointsPosition = e.GetPosition(image);
 
                 double currentWidth = image.ActualWidth;
                 double currentHeight = image.ActualHeight;
 
                 X = (int)(pointsPosition.X / currentWidth * ImageWidth);
                 Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
-                MessageBox.Show($"X: {X}, Y: {Y}");
+                string csv_Path = PREResult;
+                kernArray = KernParser.ParseKernsFromCsv(csv_Path);
+                int element = SearchId.BoxInResult(X, Y, kernArray);
 
+                if(element != -1)
+                {
+                    InputDialog dialog = new InputDialog();
+                    if (dialog.ShowDialog() == true)
+                    {
+                        // Получение введенного пользователем значения
+                        string newValue = dialog.InputText;
+
+                        // Преобразование нового значения в int
+                        
+                            // Проверяем, что элемент с индексом element существует в массиве kernArray и не выходит за его границы
+                            if (element >= 0 && element < kernArray.Length)
+                            {
+                                // Обновляем значение элемента с найденным индексом на новое значение
+                                kernArray[element].Number = Convert.ToString(newValue);
+                                Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
+                                BitmapSource bitmapSource = drawnImage.ToBitmapSource();
+                                Image_photoKerna.Source = bitmapSource;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Ошибка: элемент с таким индексом не найден.");
+                            }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка: элемент с таким значением не найден.");
+                }
             }
         }
+
+
 
         private async void Button_detect_Click(object sender, RoutedEventArgs e) // асинхронный метод
         {
@@ -229,7 +269,14 @@ namespace wpfApplication
                     }
 
                     LoadingGif.Visibility = Visibility.Hidden;
-                    Grid_main.Effect = null;
+                    Grid_main.Effect = null; ;
+
+                    string csv_path = PREResult;
+                    kernArray = KernParser.ParseKernsFromCsv(csv_path);
+                    Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
+                    BitmapSource bitmapSource = drawnImage.ToBitmapSource();
+                    Image_photoKerna.Source = bitmapSource;
+
                     MessageBox.Show($"Успешно распознано");
 
 
@@ -272,7 +319,10 @@ namespace wpfApplication
                     {
                         using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
                         {
-                            sw.WriteLine(PREResult); // Запись значения в файл
+                            foreach (Kern item in kernArray)
+                            {
+                                sw.WriteLine(item.Number);
+                            } // Запись значения в файл
                         }
 
                         MessageBox.Show("Значение успешно сохранено в файл CSV.");
@@ -301,18 +351,10 @@ namespace wpfApplication
                     MessageBoxImage.Error);
                 return;
             }
-        }
-        private void ProcessImage(string ImagePath, string[] args)
-        {
-            Rendering rend = new Rendering();
-            string data = ImagePath + ',' + PREResult;
-            Mat img;
 
         }
     }
 }
-
-
 
 
 

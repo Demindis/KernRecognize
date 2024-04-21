@@ -19,13 +19,13 @@
         Icon="4480617-200.png">
     <Grid>
         <Grid x:Name="Grid_main" Background="#006D4C" Cursor="">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Border MinWidth="400" Margin="20" Background="#00A876"/>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border MinWidth="400" Margin="20" Background="#00A876"/>
 
-        <Button x:Name="PhotoFolder" 
+            <Button x:Name="PhotoFolder" 
                 Content="Выбрать фото" 
                 HorizontalAlignment="Left" 
                 Margin="20,0,0,20.4" 
@@ -39,7 +39,7 @@
                 Foreground="#DDFFFFFF" 
                 Click="PhotoFolder_Click"
                 Command="{Binding OpenFileDialogCommand}"/>
-        <Button x:Name="Button_detect" 
+            <Button x:Name="Button_detect" 
                 Content="Распознать номер" 
                 HorizontalAlignment="Left" 
                 Margin="229,0,0,20.4"
@@ -50,7 +50,7 @@
                 FontSize="17" 
                 FontFamily="DM Sans 18pt 18pt Black" 
                 Cursor="Hand" Click="Button_detect_Click"/>
-        <Button x:Name="Button_addToExcelFile" 
+            <Button x:Name="Button_addToExcelFile" 
                 Content="Выгрузить в таблицу в Excel"
                 HorizontalAlignment="Left" 
                 Margin="439,0,0,20.4" 
@@ -81,9 +81,9 @@
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>
+
             </Border>
         </Grid>
-
         <Grid>
             <Image x:Name="LoadingGif"
                    gif:AnimationBehavior.SourceUri="loading.gif"
