@@ -75,9 +75,6 @@
                     <Image.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform x:Name="ImageScaleTransform"/>
-                            <SkewTransform AngleY="0.09"/>
-                            <RotateTransform Angle="0.771"/>
-                            <TranslateTransform Y="0.544"/>
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>

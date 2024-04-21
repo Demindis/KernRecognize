@@ -17,6 +17,7 @@ using Microsoft.VisualBasic.FileIO;
 using wpfApplication;
 using OpenCvSharp.WpfExtensions;
 using System.Drawing;
+using System.Linq.Expressions;
 using OpenCvSharp;
 using System.Windows.Input;
 
@@ -187,30 +188,32 @@ namespace wpfApplication
 
         public void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is System.Windows.Controls.Image image && e != null)
+            try
             {
-
-                System.Windows.Point pointsPosition = e.GetPosition(image);
-
-                double currentWidth = image.ActualWidth;
-                double currentHeight = image.ActualHeight;
-
-                X = (int)(pointsPosition.X / currentWidth * ImageWidth);
-                Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
-                string csv_Path = PREResult;
-                kernArray = KernParser.ParseKernsFromCsv(csv_Path);
-                int element = SearchId.BoxInResult(X, Y, kernArray);
-
-                if(element != -1)
+                if (sender is System.Windows.Controls.Image image && e != null)
                 {
-                    InputDialog dialog = new InputDialog();
-                    if (dialog.ShowDialog() == true)
-                    {
-                        // Получение введенного пользователем значения
-                        string newValue = dialog.InputText;
 
-                        // Преобразование нового значения в int
-                        
+                    System.Windows.Point pointsPosition = e.GetPosition(image);
+
+                    double currentWidth = image.ActualWidth;
+                    double currentHeight = image.ActualHeight;
+
+                    X = (int)(pointsPosition.X / currentWidth * ImageWidth);
+                    Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
+                    string csv_Path = PREResult;
+                    kernArray = KernParser.ParseKernsFromCsv(csv_Path);
+                    int element = SearchId.BoxInResult(X, Y, kernArray);
+
+                    if (element != -1)
+                    {
+                        InputDialog dialog = new InputDialog();
+                        if (dialog.ShowDialog() == true)
+                        {
+                            // Получение введенного пользователем значения
+                            string newValue = dialog.InputText;
+
+                            // Преобразование нового значения в int
+
                             // Проверяем, что элемент с индексом element существует в массиве kernArray и не выходит за его границы
                             if (element >= 0 && element < kernArray.Length)
                             {
@@ -224,12 +227,19 @@ namespace wpfApplication
                             {
                                 MessageBox.Show("Ошибка: элемент с таким индексом не найден.");
                             }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ошибка: элемент с таким значением не найден.");
                     }
                 }
-                else
-                {
-                    MessageBox.Show("Ошибка: элемент с таким значением не найден.");
-                }
+
+            }
+            catch
+
+            {
+                MessageBox.Show("Для редактирования значений выполните распознавание");
             }
         }
 
@@ -265,6 +275,7 @@ namespace wpfApplication
                         using (StreamReader reader = process.StandardOutput)
                         {
                             PREResult = reader.ReadToEnd();
+                            process.Kill();
                         }
                     }
 
