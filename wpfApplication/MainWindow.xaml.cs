@@ -72,8 +72,6 @@ namespace wpfApplication
         // Чтобы послать нотификацию о том, что свойство Image поменялось
         public class Content : INotifyPropertyChanged
         {
-            private List<string> imagePaths = new List<string>(); // список путей к изображениям
-            private int currentImageIndex = -1; // индекс текущего изображения
 
 
             public Content()
@@ -106,14 +104,19 @@ namespace wpfApplication
             {
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    using (var stream = new FileStream(openFileDialog.FileName, FileMode.Open))
+                    string ImagePath1 = openFileDialog.FileName;
+                    string ImagePathNew = "C:\\Users\\Denis\\img.jpg";
+                    Mat img = Cv2.ImRead(ImagePath1);
+                    Cv2.ImWrite(ImagePathNew, img);
+
+                    using (var stream = new FileStream(ImagePathNew, FileMode.Open))
                     {
-                        BitmapFrame imageFrame =
-                            BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                        BitmapFrame imageFrame = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+
                         ImageWidth = imageFrame.PixelWidth;
                         ImageHeight = imageFrame.PixelHeight;
 
-                        ImagePath = openFileDialog.FileName;
+                        ImagePath = ImagePathNew;
                         Image = imageFrame;
                         RaisePropertyChanged("Image");
                     }
@@ -267,7 +270,7 @@ namespace wpfApplication
                         using (StreamReader reader = process.StandardOutput)
                         {
                             PREResult = reader.ReadToEnd();
-                            process.Kill();
+                            
                         }
                     }
 
@@ -279,6 +282,7 @@ namespace wpfApplication
                     Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
                     BitmapSource bitmapSource = drawnImage.ToBitmapSource();
                     Image_photoKerna.Source = bitmapSource;
+                   
 
                     MessageBox.Show($"Успешно распознано");
 
@@ -354,7 +358,6 @@ namespace wpfApplication
                     MessageBoxImage.Error);
                 return;
             }
-
         }
     }
 }
