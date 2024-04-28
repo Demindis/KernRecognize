@@ -29,8 +29,6 @@ namespace wpfApplication
         public static int ImageWidth;
         public static int ImageHeight;
         public Kern[] kernArray;
-        private bool isDragging = false; 
-        private System.Windows.Point startPoint;
 
 
         public MainWindow()
@@ -122,7 +120,6 @@ namespace wpfApplication
                         ImagePath = ImagePathNew;
                         Image = imageFrame;
                         RaisePropertyChanged("Image");
-                        Image = null;
                     }
                 }
             }
