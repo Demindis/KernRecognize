@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,6 +29,9 @@ namespace wpfApplication
         public static int ImageWidth;
         public static int ImageHeight;
         public Kern[] kernArray;
+        private bool isDragging = false; 
+        private System.Windows.Point startPoint;
+
 
         public MainWindow()
         {
@@ -72,8 +76,6 @@ namespace wpfApplication
         // Чтобы послать нотификацию о том, что свойство Image поменялось
         public class Content : INotifyPropertyChanged
         {
-
-
             public Content()
             {
                 // Инициализация команды
@@ -104,8 +106,9 @@ namespace wpfApplication
             {
                 if (openFileDialog.ShowDialog() == true)
                 {
+                    
                     string ImagePath1 = openFileDialog.FileName;
-                    string ImagePathNew = "C:\\Users\\Denis\\img.jpg";
+                    string ImagePathNew = "C:\\Users\\Admin\\img.jpg";
                     Mat img = Cv2.ImRead(ImagePath1);
                     Cv2.ImWrite(ImagePathNew, img);
 
@@ -119,66 +122,68 @@ namespace wpfApplication
                         ImagePath = ImagePathNew;
                         Image = imageFrame;
                         RaisePropertyChanged("Image");
+                        Image = null;
                     }
                 }
             }
-
-
-            // Реализация интерфейса INotifyPropertyChanged
-            public event PropertyChangedEventHandler PropertyChanged;
 
             void RaisePropertyChanged(string propertyName)
             {
                 if (PropertyChanged != null)
                     PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+            // Реализация интерфейса INotifyPropertyChanged
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            
         }
 
-        // Реализация изменения масштаба изображнения прокруткой  
-        private double currentScale = 1.0; // Текущий масштаб изображения
-        private double minScale = 0.5; // Минимальный масштаб
-        private double maxScale = 2.0; // Максимальный масштаб
-        private double scaleStep = 0.1; // Шаг изменения масштаба
 
         //обработчик события MouseWheel
         private void Image_photoKerna_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            // Получение текущего масштаба
-            double currentScaleX = ImageScaleTransform.ScaleX;
-            double currentScaleY = ImageScaleTransform.ScaleY;
+            double scaleX = ImageScaleTransform.ScaleX;
+            double scaleY = ImageScaleTransform.ScaleY;
 
-            // Определение направления прокрутки
-            int delta = e.Delta > 0 ? 1 : -1;
+            System.Windows.Point position = e.GetPosition(Image_photoKerna);
 
-            // Рассчитываем новый масштаб
-            double newScaleX = currentScaleX + delta * scaleStep;
-            double newScaleY = currentScaleY + delta * scaleStep;
+            // Фактор изменения масштаба
+            double zoomFactor = 0.1; 
 
-            // Проверяем, чтобы новый масштаб не выходил за пределы minScale и maxScale
-            newScaleX = Math.Max(minScale, Math.Min(maxScale, newScaleX));
-            newScaleY = Math.Max(minScale, Math.Min(maxScale, newScaleY));
-
-            // Получаем размеры рамки
-            double containerWidth = ImageContainer.ActualWidth;
-            double containerHeight = ImageContainer.ActualHeight;
-
-            // Получаем размеры изображения после масштабирования
-            double newImageWidth = Image_photoKerna.ActualWidth * newScaleX;
-            double newImageHeight = Image_photoKerna.ActualHeight * newScaleY;
-
-            // Проверяем, чтобы новый размер изображения не выходил за пределы размеров рамки
-            if (newImageWidth <= containerWidth && newImageHeight <= containerHeight)
+            // Уменьшаем масштаб при прокрутке колеса вниз и увеличиваем при прокрутке вверх
+            if (e.Delta > 0)
             {
-                // Применяем новый масштаб
-                ImageScaleTransform.ScaleX = newScaleX;
-                ImageScaleTransform.ScaleY = newScaleY;
+                scaleX += zoomFactor;
+                scaleY += zoomFactor;
             }
+            else
+            {
+                scaleX -= zoomFactor;
+                scaleY -= zoomFactor;
+            }
+
+            // Ограничиваем минимальный и максимальный масштаб
+            double minScale = 1; 
+            double maxScale = 5.0;
+            scaleX = Math.Min(Math.Max(scaleX, minScale), maxScale);
+            scaleY = Math.Min(Math.Max(scaleY, minScale), maxScale);
+
+            // Определяем смещение для сохранения позиции курсора
+            double offsetX = (position.X - Image_photoKerna.ActualWidth / 2) * (scaleX - ImageScaleTransform.ScaleX);
+            double offsetY = (position.Y - Image_photoKerna.ActualHeight / 2) * (scaleY - ImageScaleTransform.ScaleY);
+
+            // Применяем новый масштаб и смещение
+            ImageScaleTransform.ScaleX = scaleX;
+            ImageScaleTransform.ScaleY = scaleY;
+            ImageTranslateTransform.X -= offsetX;
+            ImageTranslateTransform.Y -= offsetY;
         }
+
 
 
         private void PhotoFolder_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         public void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -196,12 +201,13 @@ namespace wpfApplication
                     X = (int)(pointsPosition.X / currentWidth * ImageWidth);
                     Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
                     string csv_Path = PREResult;
+
                     kernArray = KernParser.ParseKernsFromCsv(csv_Path);
                     int element = SearchId.BoxInResult(X, Y, kernArray);
 
                     if (element != -1)
                     {
-                        InputDialog dialog = new InputDialog();
+                        RedImage dialog = new RedImage();
                         if (dialog.ShowDialog() == true)
                         {
                             // Получение введенного пользователем значения
@@ -245,7 +251,7 @@ namespace wpfApplication
             Grid_main.Effect = new BlurEffect { Radius = 15 };
             LoadingGif.Visibility = Visibility.Visible;
 
-            string pythonScriptPath = "1.py"; // Укажите путь к вашему скрипту Python здесь
+            string pythonScriptPath = @"C:\Users\Admin\source\repos\DenisDemin1\KernRecognize\wpfApplication\1.py"; // Укажите путь к вашему скрипту Python здесь
             // Путь к изображению
             //string imagePath = MyGlobals.ImagePath; // Укажите путь к вашему изображению здесь
             if (ImagePath != null)
@@ -270,7 +276,7 @@ namespace wpfApplication
                         using (StreamReader reader = process.StandardOutput)
                         {
                             PREResult = reader.ReadToEnd();
-                            
+
                         }
                     }
 
@@ -282,11 +288,9 @@ namespace wpfApplication
                     Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
                     BitmapSource bitmapSource = drawnImage.ToBitmapSource();
                     Image_photoKerna.Source = bitmapSource;
-                   
+
 
                     MessageBox.Show($"Успешно распознано");
-
-
                 }
                 catch (Exception ex)
                 {
@@ -305,7 +309,7 @@ namespace wpfApplication
                 return;
             }
         }
-
+        
         private void Button_addToExcelFile_Click(object sender, RoutedEventArgs e)
         {
 
@@ -359,8 +363,8 @@ namespace wpfApplication
                 return;
             }
         }
+
     }
 }
-
 
 

@@ -38,8 +38,8 @@ def boxInResult(box_center, box_number):
 
 def recognize(img_path):
     reader = easyocr.Reader(['en'],
-                            model_storage_directory='C:/Users/Denis/.EasyOCR/model',
-                            user_network_directory='C:/Users/Denis/.EasyOCR/user_network',
+                            model_storage_directory='C:/Users/Admin/.EasyOCR/model',
+                            user_network_directory='C:/Users/Admin/.EasyOCR/user_network',
                             recog_network='custom_example', gpu=True)
 
     img = cv.imread(img_path)
@@ -87,14 +87,18 @@ def recognize(img_path):
     return csv_data
 
 if __name__ == "__main__":
-    # Парсинг аргументов командной строки
-    parser = argparse.ArgumentParser()
-    parser.add_argument("image_path", help="Путь к изображению для распознавания")
-    args = parser.parse_args()
+    try:
+        # Парсинг аргументов командной строки
+        parser = argparse.ArgumentParser()
+        parser.add_argument("image_path", help="Путь к изображению для распознавания")
+        args = parser.parse_args()
 
-    # Вызов функции распознавания и генерации CSV
-    csv_data = recognize(args.image_path)
+        # Вызов функции распознавания и генерации CSV
+        csv_data = recognize(args.image_path)
 
-    # Вывод CSV данных в виде строк
-    for row in csv_data:
-        print(','.join(row))  # Печатаем каждую строку
+        # Вывод CSV данных в виде строк
+        for row in csv_data:
+            print(','.join(row))  # Печатаем каждую строку
+    except Exception as ex:
+        print(ex)
+    input()

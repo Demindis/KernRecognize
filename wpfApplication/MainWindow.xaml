@@ -40,7 +40,7 @@
                 Click="PhotoFolder_Click"
                 Command="{Binding OpenFileDialogCommand}"/>
             <Button x:Name="Button_detect" 
-                Content="Распознать номер" 
+                Content="Распознать номера" 
                 HorizontalAlignment="Left" 
                 Margin="229,0,0,20.4"
                 VerticalAlignment="Bottom" 
@@ -71,10 +71,12 @@
                    RenderTransformOrigin="0.5,0.5" 
                    MouseWheel="Image_photoKerna_MouseWheel"
                    MouseLeftButtonDown="Image_MouseLeftButtonDown"
+                       
             >
                     <Image.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform x:Name="ImageScaleTransform"/>
+                            <ScaleTransform x:Name="ImageScaleTransform" ScaleX="1" ScaleY="1"/>
+                            <TranslateTransform x:Name="ImageTranslateTransform"/>
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>
