@@ -1,64 +1,65 @@
-﻿using System.Windows;
+﻿using System.Windows.Controls;
+using System.Windows.Media.Media3D;
+using System.Windows;
+
+using System.Windows;
 using System.Windows.Controls;
 
-namespace wpfApplication
+public class InputDialog : Window
 {
-    public class InputDialog : Window
+    public string InputText { get; private set; }
+
+    private TextBox textBox;
+    private Button okButton;
+    private Button cancelButton;
+
+    public InputDialog()
     {
-        public string InputText { get; private set; }
+        InitializeComponents();
+    }
 
-        private TextBox textBox;
-        private Button okButton;
-        private Button cancelButton;
+    private void InitializeComponents()
+    {
+        Title = "Введите новое значение";
+        Width = 300;
+        Height = 150;
+        ResizeMode = ResizeMode.NoResize;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-        public InputDialog()
-        {
-            InitializeComponents();
-        }
+        textBox = new TextBox();
+        textBox.Margin = new Thickness(10);
+        textBox.HorizontalAlignment = HorizontalAlignment.Stretch;
 
-        private void InitializeComponents()
-        {
-            Title = "Введите новое значение";
-            Width = 300;
-            Height = 150;
-            ResizeMode = ResizeMode.NoResize;
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        okButton = new Button();
+        okButton.Content = "OK";
+        okButton.Margin = new Thickness(10);
+        okButton.HorizontalAlignment = HorizontalAlignment.Left;
+        okButton.Click += OkButton_Click;
 
-            textBox = new TextBox();
-            textBox.Margin = new Thickness(10);
-            textBox.HorizontalAlignment = HorizontalAlignment.Stretch;
+        cancelButton = new Button();
+        cancelButton.Content = "Cancel";
+        cancelButton.Margin = new Thickness(10);
+        cancelButton.HorizontalAlignment = HorizontalAlignment.Right;
+        cancelButton.Click += CancelButton_Click;
 
-            okButton = new Button();
-            okButton.Content = "OK";
-            okButton.Margin = new Thickness(10);
-            okButton.HorizontalAlignment = HorizontalAlignment.Left;
-            okButton.Click += OkButton_Click;
+        StackPanel stackPanel = new StackPanel();
+        stackPanel.Children.Add(textBox);
+        stackPanel.Children.Add(okButton);
+        stackPanel.Children.Add(cancelButton);
 
-            cancelButton = new Button();
-            cancelButton.Content = "Cancel";
-            cancelButton.Margin = new Thickness(10);
-            cancelButton.HorizontalAlignment = HorizontalAlignment.Right;
-            cancelButton.Click += CancelButton_Click;
+        Content = stackPanel;
+    }
 
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Children.Add(textBox);
-            stackPanel.Children.Add(okButton);
-            stackPanel.Children.Add(cancelButton);
+    private void OkButton_Click(object sender, RoutedEventArgs e)
+    {
+        InputText = textBox.Text;
+        DialogResult = true;
+        Close();
+    }
 
-            Content = stackPanel;
-        }
-
-        private void OkButton_Click(object sender, RoutedEventArgs e)
-        {
-            InputText = textBox.Text;
-            DialogResult = true;
-            Close();
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
-        }
+    private void CancelButton_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = false;
+        Close();
     }
 }

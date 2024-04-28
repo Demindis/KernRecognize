@@ -40,7 +40,7 @@
                 Click="PhotoFolder_Click"
                 Command="{Binding OpenFileDialogCommand}"/>
             <Button x:Name="Button_detect" 
-                Content="Распознать номер" 
+                Content="Распознать номера" 
                 HorizontalAlignment="Left" 
                 Margin="229,0,0,20.4"
                 VerticalAlignment="Bottom" 
