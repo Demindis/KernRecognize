@@ -25,6 +25,29 @@
             </Grid.RowDefinitions>
             <Border MinWidth="400" Margin="20" Background="#00A876"/>
 
+            <Border x:Name="ImageContainer" 
+                MinWidth="400" 
+                Margin="20,20,20,79" 
+                Background="#00A876"
+                ClipToBounds="True">
+                <Canvas x:Name="canDraw"
+                        RenderTransformOrigin="0.5,0.5" 
+                        MouseWheel="Image_photoKerna_MouseWheel"
+                        Height="604" Width="1113"
+                        MouseDown="canDraw_MouseDown">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="ImageScaleTransform" ScaleX="1" ScaleY="1"/>
+                            <TranslateTransform x:Name="ImageTranslateTransform"/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Image x:Name="Image_photoKerna"
+                   OpacityMask="White"
+                   Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                   MouseLeftButtonDown="Image_MouseLeftButtonDown" Height="604" Width="1113">
+                    </Image>
+                </Canvas>
+            </Border>
             <Button x:Name="PhotoFolder" 
                 Content="Выбрать фото" 
                 HorizontalAlignment="Left" 
@@ -69,28 +92,6 @@
                 FontSize="17" 
                 FontFamily="DM Sans 18pt 18pt Black" 
                 Click="Button_add_Kern_Click"/>
-            <Border x:Name="ImageContainer" 
-                MinWidth="400" 
-                Margin="30,42,38,97" 
-                Background="#00A876">
-                <Canvas x:Name="canDraw"
-                        RenderTransformOrigin="0.5,0.5" 
-                        MouseWheel="Image_photoKerna_MouseWheel"
-                        Height="604" Width="1113"
-                        MouseDown="canDraw_MouseDown">
-                    <Canvas.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="ImageScaleTransform" ScaleX="1" ScaleY="1"/>
-                            <TranslateTransform x:Name="ImageTranslateTransform"/>
-                        </TransformGroup>
-                    </Canvas.RenderTransform>
-                    <Image x:Name="Image_photoKerna"
-                   OpacityMask="White"
-                   Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                   MouseLeftButtonDown="Image_MouseLeftButtonDown" Height="604" Width="1113">
-                    </Image>
-                </Canvas>
-            </Border>
         </Grid>
         <Grid>
             <Image x:Name="LoadingGif"

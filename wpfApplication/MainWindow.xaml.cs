@@ -150,7 +150,10 @@ namespace wpfApplication
             System.Windows.Point position = e.GetPosition(canDraw);
 
             // Фактор изменения масштаба
-            double zoomFactor = 0.1; 
+            double zoomFactor = 0.1;
+
+            double minScale = 1;
+            double maxScale = 2.5;
 
             // Уменьшаем масштаб при прокрутке колеса вниз и увеличиваем при прокрутке вверх
             if (e.Delta > 0)
@@ -162,23 +165,39 @@ namespace wpfApplication
             {
                 scaleX -= zoomFactor;
                 scaleY -= zoomFactor;
+
+                // Определяем смещение для возврата к нулевой точке
+                double offsX = ImageTranslateTransform.X * 0.2;
+                double offsY = ImageTranslateTransform.Y * 0.2;
+
+                // Применяем новое смещение
+                ImageTranslateTransform.X -= offsX;
+                ImageTranslateTransform.Y -= offsY;
             }
 
-            // Ограничиваем минимальный и максимальный масштаб
-            double minScale = 1; 
-            double maxScale = 5.0;
+            // Ограничиваем минимальный и максимальный 
             scaleX = Math.Min(Math.Max(scaleX, minScale), maxScale);
             scaleY = Math.Min(Math.Max(scaleY, minScale), maxScale);
 
             // Определяем смещение для сохранения позиции курсора
-            double offsetX = (position.X - Image_photoKerna.ActualWidth / 2) * (scaleX - ImageScaleTransform.ScaleX);
-            double offsetY = (position.Y - Image_photoKerna.ActualHeight / 2) * (scaleY - ImageScaleTransform.ScaleY);
+            double offsetX = (position.X - canDraw.ActualWidth / 2) * (scaleX - ImageScaleTransform.ScaleX);
+            double offsetY = (position.Y - canDraw.ActualHeight / 2) * (scaleY - ImageScaleTransform.ScaleY);
 
-            // Применяем новый масштаб и смещение
-            ImageScaleTransform.ScaleX = scaleX;
-            ImageScaleTransform.ScaleY = scaleY;
-            ImageTranslateTransform.X -= offsetX;
-            ImageTranslateTransform.Y -= offsetY;
+            if (e.Delta > 0)
+            {
+                // Применяем новый масштаб и смещение
+                ImageScaleTransform.ScaleX = scaleX;
+                ImageScaleTransform.ScaleY = scaleY;
+                ImageTranslateTransform.X -= offsetX;
+                ImageTranslateTransform.Y -= offsetY;
+            }
+            else
+            {
+                // Применяем новый масштаб
+                ImageScaleTransform.ScaleX = scaleX;
+                ImageScaleTransform.ScaleY = scaleY;
+            }
+
         }
 
 
