@@ -316,8 +316,6 @@ namespace wpfApplication
         
         private void Button_addToExcelFile_Click(object sender, RoutedEventArgs e)
         {
-
-
             if (PREResult != null)
             {
                 // Показываем диалоговое окно "Сохранить как"
@@ -402,8 +400,17 @@ namespace wpfApplication
 
         private void Button_add_Kern_Click(object sender, RoutedEventArgs e)
         {
-            addFlag = true;
-            Image_photoKerna.Cursor = Cursors.Cross;
+            if (PREResult != null)
+            {
+                addFlag = true;
+                Image_photoKerna.Cursor = Cursors.Cross;
+            }
+            else
+            {
+                MessageBox.Show($"Ошибка, выполните распознование", "Ошибка ручного добавления", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
         }
 
         private void canDraw_MouseUp(object sender, MouseButtonEventArgs e)
@@ -415,7 +422,7 @@ namespace wpfApplication
 
 
             DragRectangle = null;
-            addFlag = false;    
+            addFlag = false;
             Image_photoKerna.Cursor = null;
 
             //Получаем высоту,ширину Канваса и Фото
@@ -427,7 +434,7 @@ namespace wpfApplication
             //Тк Фото растягивается по канвасу, вычисляем сдвиг(для нулевых и конечных точек надо)
             double offsetX = Math.Abs((PhotoWidth - CanvasWidth) / 2);
             double offsetY = Math.Abs((PhotoHeight - CanvasHeight) / 2);
-            
+
             //Применяем сдвиг к точкам
             StartPoint.X -= offsetX;
             StartPoint.Y -= offsetY;
@@ -460,23 +467,25 @@ namespace wpfApplication
                 // Получение введенного пользователем значения
                 newKernNumber = dialog.InputText;
             }
-
-            Kern newKern = new Kern
+            if (newKernNumber != "")
             {
-                CenterX = (int)centerX,
-                CenterY = (int)centerY,
-                Radius = (int)radius,
-                Number = newKernNumber
-            };
+                Kern newKern = new Kern
+                {
+                    CenterX = (int)centerX,
+                    CenterY = (int)centerY,
+                    Radius = (int)radius,
+                    Number = newKernNumber
+                };
 
-            Array.Resize(ref kernArray, kernArray.Length + 1);
+                Array.Resize(ref kernArray, kernArray.Length + 1);
 
-            kernArray[kernArray.Length - 1] = newKern;
+                kernArray[kernArray.Length - 1] = newKern;
 
-            //Вызываем метод Draw с обновленным массивом kernArray
-            Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
-            BitmapSource bitmapSource = drawnImage.ToBitmapSource();
-            Image_photoKerna.Source = bitmapSource;
+                //Вызываем метод Draw с обновленным массивом kernArray
+                Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
+                BitmapSource bitmapSource = drawnImage.ToBitmapSource();
+                Image_photoKerna.Source = bitmapSource;
+            }
 
             //MessageBox.Show($"Координаты 1: {X1},{Y1}\nКоординаты 2: {X2},{Y2}\nИзначальное разрешение Фото:{ImageWidth}, {ImageHeight}\n\nНомер: {newKernNumber}");
             //MessageBox.Show($"StartPoint.X,Y(Относ. фото): ({StartPoint.X}, {StartPoint.Y})\nLastPoint.X,Y(Относ. фото): ({LastPoint.X}, {LastPoint.Y})\nКоординаты 1: {X1},{Y1}\nКоординаты 2: {X2},{Y2}\nТекущее разрешение Канвас :{CanvasWidth}, {CanvasHeight}\nТекущее разрешение Фото:{PhotoWidth}, {PhotoHeight}\nИзначальное разрешение Фото:{ImageWidth}, {ImageHeight}\n\nНомер: {newKernNumber}");

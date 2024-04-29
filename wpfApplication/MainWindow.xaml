@@ -60,7 +60,7 @@
                 FontSize="17" 
                 FontFamily="DM Sans 18pt 18pt Black" Click="Button_addToExcelFile_Click"/>
             <Button x:Name="Button_add_Kern" 
-                Content="Выделить вручную"
+                Content="Добавить вручную"
                 HorizontalAlignment="Left" 
                 Margin="439,0,0,20" 
                 VerticalAlignment="Bottom" Width="272" 
