@@ -9,6 +9,10 @@ namespace wpfApplication
     {
         public string InputText { get; private set; }
 
+        public string LabelText
+        {
+            set { Label.Content = value; }
+        }
         public RedImage()
         {
             InitializeComponent();

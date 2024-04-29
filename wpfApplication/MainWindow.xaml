@@ -53,34 +53,43 @@
             <Button x:Name="Button_addToExcelFile" 
                 Content="Выгрузить в таблицу в Excel"
                 HorizontalAlignment="Left" 
-                Margin="439,0,0,20.4" 
+                Margin="711,0,0,20" 
                 VerticalAlignment="Bottom" Width="272" 
                 Height="59" Background="#FF2EC799"
                 BorderBrush="#FF2EC799" 
                 FontSize="17" 
                 FontFamily="DM Sans 18pt 18pt Black" Click="Button_addToExcelFile_Click"/>
+            <Button x:Name="Button_add_Kern" 
+                Content="Выделить вручную"
+                HorizontalAlignment="Left" 
+                Margin="439,0,0,20" 
+                VerticalAlignment="Bottom" Width="272" 
+                Height="59" Background="#FF2EC799"
+                BorderBrush="#FF2EC799" 
+                FontSize="17" 
+                FontFamily="DM Sans 18pt 18pt Black" 
+                Click="Button_add_Kern_Click"/>
             <Border x:Name="ImageContainer" 
                 MinWidth="400" 
                 Margin="30,42,38,97" 
                 Background="#00A876">
-
-                <Image x:Name="Image_photoKerna" 
-                   Margin="220,143,274,127"
-                   OpacityMask="White"
-                   Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                   RenderTransformOrigin="0.5,0.5" 
-                   MouseWheel="Image_photoKerna_MouseWheel"
-                   MouseLeftButtonDown="Image_MouseLeftButtonDown"
-                       
-            >
-                    <Image.RenderTransform>
+                <Canvas x:Name="canDraw"
+                        RenderTransformOrigin="0.5,0.5" 
+                        MouseWheel="Image_photoKerna_MouseWheel"
+                        Height="604" Width="1113"
+                        MouseDown="canDraw_MouseDown">
+                    <Canvas.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform x:Name="ImageScaleTransform" ScaleX="1" ScaleY="1"/>
                             <TranslateTransform x:Name="ImageTranslateTransform"/>
                         </TransformGroup>
-                    </Image.RenderTransform>
-                </Image>
-
+                    </Canvas.RenderTransform>
+                    <Image x:Name="Image_photoKerna"
+                   OpacityMask="White"
+                   Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                   MouseLeftButtonDown="Image_MouseLeftButtonDown" Height="604" Width="1113">
+                    </Image>
+                </Canvas>
             </Border>
         </Grid>
         <Grid>

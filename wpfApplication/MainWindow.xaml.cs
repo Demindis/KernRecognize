@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Controls;
 
 namespace wpfApplication
 {
@@ -29,6 +31,9 @@ namespace wpfApplication
         public static int ImageWidth;
         public static int ImageHeight;
         public Kern[] kernArray;
+        public bool addFlag = false;
+        private System.Windows.Shapes.Rectangle DragRectangle = null;
+        private System.Windows.Point StartPoint, LastPoint;
 
 
         public MainWindow()
@@ -142,7 +147,7 @@ namespace wpfApplication
             double scaleX = ImageScaleTransform.ScaleX;
             double scaleY = ImageScaleTransform.ScaleY;
 
-            System.Windows.Point position = e.GetPosition(Image_photoKerna);
+            System.Windows.Point position = e.GetPosition(canDraw);
 
             // Фактор изменения масштаба
             double zoomFactor = 0.1; 
@@ -185,60 +190,62 @@ namespace wpfApplication
 
         public void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            try
+            if (!addFlag)
             {
-                if (sender is System.Windows.Controls.Image image && e != null)
+                try
                 {
-
-                    System.Windows.Point pointsPosition = e.GetPosition(image);
-
-                    double currentWidth = image.ActualWidth;
-                    double currentHeight = image.ActualHeight;
-
-                    X = (int)(pointsPosition.X / currentWidth * ImageWidth);
-                    Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
-                    string csv_Path = PREResult;
-
-                    kernArray = KernParser.ParseKernsFromCsv(csv_Path);
-                    int element = SearchId.BoxInResult(X, Y, kernArray);
-
-                    if (element != -1)
+                    if (sender is System.Windows.Controls.Image image && e != null)
                     {
-                        RedImage dialog = new RedImage();
-                        if (dialog.ShowDialog() == true)
+
+                        System.Windows.Point pointsPosition = e.GetPosition(image);
+
+                        double currentWidth = image.ActualWidth;
+                        double currentHeight = image.ActualHeight;
+
+                        X = (int)(pointsPosition.X / currentWidth * ImageWidth);
+                        Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
+
+                        int element = SearchId.BoxInResult(X, Y, kernArray);
+
+                        if (element != -1)
                         {
-                            // Получение введенного пользователем значения
-                            string newValue = dialog.InputText;
-
-                            // Преобразование нового значения в int
-
-                            // Проверяем, что элемент с индексом element существует в массиве kernArray и не выходит за его границы
-                            if (element >= 0 && element < kernArray.Length)
+                            RedImage dialog = new RedImage();
+                            if (dialog.ShowDialog() == true)
                             {
-                                // Обновляем значение элемента с найденным индексом на новое значение
-                                kernArray[element].Number = Convert.ToString(newValue);
-                                Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
-                                BitmapSource bitmapSource = drawnImage.ToBitmapSource();
-                                Image_photoKerna.Source = bitmapSource;
-                            }
-                            else
-                            {
-                                MessageBox.Show("Ошибка: элемент с таким индексом не найден.");
+                                // Получение введенного пользователем значения
+                                string newValue = dialog.InputText;
+
+                                // Преобразование нового значения в int
+
+                                // Проверяем, что элемент с индексом element существует в массиве kernArray и не выходит за его границы
+                                if (element >= 0 && element < kernArray.Length)
+                                {
+                                    // Обновляем значение элемента с найденным индексом на новое значение
+                                    kernArray[element].Number = Convert.ToString(newValue);
+                                    Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
+                                    BitmapSource bitmapSource = drawnImage.ToBitmapSource();
+                                    Image_photoKerna.Source = bitmapSource;
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Ошибка: элемент с таким индексом не найден.");
+                                }
                             }
                         }
+                        else
+                        {
+                            MessageBox.Show("Ошибка: элемент с таким значением не найден.");
+                        }
                     }
-                    else
-                    {
-                        MessageBox.Show("Ошибка: элемент с таким значением не найден.");
-                    }
+
                 }
+                catch
 
+                {
+                    MessageBox.Show("Для редактирования значений выполните распознавание");
+                }
             }
-            catch
 
-            {
-                MessageBox.Show("Для редактирования значений выполните распознавание");
-            }
         }
 
 
@@ -361,6 +368,119 @@ namespace wpfApplication
             }
         }
 
+        private void canDraw_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(addFlag)
+            {
+                StartPoint = Mouse.GetPosition(canDraw);
+                LastPoint = StartPoint;
+                DragRectangle = new System.Windows.Shapes.Rectangle();
+                DragRectangle.Width = 1;
+                DragRectangle.Height = 1;
+                DragRectangle.Stroke = System.Windows.Media.Brushes.Red;
+                DragRectangle.StrokeThickness = 1;
+                DragRectangle.Cursor = Cursors.Cross;
+
+                canDraw.Children.Add(DragRectangle);
+                Canvas.SetLeft(DragRectangle, StartPoint.X);
+                Canvas.SetTop(DragRectangle, StartPoint.Y);
+
+                canDraw.MouseMove += canDraw_MouseMove;
+                canDraw.MouseUp += canDraw_MouseUp;
+                canDraw.CaptureMouse();
+            }
+        }
+
+        private void canDraw_MouseMove(object sender, MouseEventArgs e)
+        {
+            LastPoint = Mouse.GetPosition(canDraw);
+            DragRectangle.Width = Math.Abs(LastPoint.X - StartPoint.X);
+            DragRectangle.Height = Math.Abs(LastPoint.Y - StartPoint.Y);
+            Canvas.SetLeft(DragRectangle, Math.Min(LastPoint.X, StartPoint.X));
+            Canvas.SetTop(DragRectangle, Math.Min(LastPoint.Y, StartPoint.Y));
+        }
+
+        private void Button_add_Kern_Click(object sender, RoutedEventArgs e)
+        {
+            addFlag = true;
+            Image_photoKerna.Cursor = Cursors.Cross;
+        }
+
+        private void canDraw_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            canDraw.ReleaseMouseCapture();
+            canDraw.MouseMove -= canDraw_MouseMove;
+            canDraw.MouseUp -= canDraw_MouseUp;
+            canDraw.Children.Remove(DragRectangle);
+
+
+            DragRectangle = null;
+            addFlag = false;    
+            Image_photoKerna.Cursor = null;
+
+            //Получаем высоту,ширину Канваса и Фото
+            double CanvasWidth = canDraw.ActualWidth;
+            double CanvasHeight = canDraw.ActualHeight;
+            double PhotoWidth = Image_photoKerna.ActualWidth;
+            double PhotoHeight = Image_photoKerna.ActualHeight;
+
+            //Тк Фото растягивается по канвасу, вычисляем сдвиг(для нулевых и конечных точек надо)
+            double offsetX = Math.Abs((PhotoWidth - CanvasWidth) / 2);
+            double offsetY = Math.Abs((PhotoHeight - CanvasHeight) / 2);
+            
+            //Применяем сдвиг к точкам
+            StartPoint.X -= offsetX;
+            StartPoint.Y -= offsetY;
+            LastPoint.X -= offsetX;
+            LastPoint.Y -= offsetY;
+
+            //Устанавливаем координаты относительно изначального разрешения
+            var X1 = (int)(StartPoint.X / PhotoWidth * ImageWidth);
+            var Y1 = (int)(StartPoint.Y / PhotoHeight * ImageHeight);
+            var X2 = (int)(LastPoint.X / PhotoWidth * ImageWidth);
+            var Y2 = (int)(LastPoint.Y / PhotoHeight * ImageHeight);
+
+            // Находим средние значения координат X и Y
+            double centerX = (X1 + X2) / 2;
+            double centerY = (Y1 + Y2) / 2;
+
+            // Вычисляем разницу между координатами
+            double diffX = Math.Abs(X2 - X1);
+            double diffY = Math.Abs(Y2 - Y1);
+
+            // Находим радиус как половину максимального значения из разницы по X и по Y
+            double radius = Math.Max(diffX, diffY) / 2;
+
+            string newKernNumber = "";
+
+            RedImage dialog = new RedImage();
+            dialog.LabelText = "Введите нераспознанный номер";
+            if (dialog.ShowDialog() == true)
+            {
+                // Получение введенного пользователем значения
+                newKernNumber = dialog.InputText;
+            }
+
+            Kern newKern = new Kern
+            {
+                CenterX = (int)centerX,
+                CenterY = (int)centerY,
+                Radius = (int)radius,
+                Number = newKernNumber
+            };
+
+            Array.Resize(ref kernArray, kernArray.Length + 1);
+
+            kernArray[kernArray.Length - 1] = newKern;
+
+            //Вызываем метод Draw с обновленным массивом kernArray
+            Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
+            BitmapSource bitmapSource = drawnImage.ToBitmapSource();
+            Image_photoKerna.Source = bitmapSource;
+
+            //MessageBox.Show($"Координаты 1: {X1},{Y1}\nКоординаты 2: {X2},{Y2}\nИзначальное разрешение Фото:{ImageWidth}, {ImageHeight}\n\nНомер: {newKernNumber}");
+            //MessageBox.Show($"StartPoint.X,Y(Относ. фото): ({StartPoint.X}, {StartPoint.Y})\nLastPoint.X,Y(Относ. фото): ({LastPoint.X}, {LastPoint.Y})\nКоординаты 1: {X1},{Y1}\nКоординаты 2: {X2},{Y2}\nТекущее разрешение Канвас :{CanvasWidth}, {CanvasHeight}\nТекущее разрешение Фото:{PhotoWidth}, {PhotoHeight}\nИзначальное разрешение Фото:{ImageWidth}, {ImageHeight}\n\nНомер: {newKernNumber}");
+        }
     }
 }
 

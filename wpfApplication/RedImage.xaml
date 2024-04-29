@@ -55,7 +55,7 @@
             </Grid.RowDefinitions>
             <Border Background="White" Margin="3" Grid.RowSpan="2">
             </Border>
-            <Label Content="Введите новое значение" Foreground="Gray" Margin="10,15,10,0" Height="26" VerticalAlignment="Top" FontSize="15" FontFamily="DM Sans" HorizontalContentAlignment="Center"/>
+            <Label x:Name="Label" Content="Введите новое значение" Foreground="Gray" Margin="10,15,10,0" Height="26" VerticalAlignment="Top" FontSize="15" FontFamily="DM Sans" HorizontalContentAlignment="Center"/>
             <Button x:Name="OkButton" 
                 Content="Применить" 
                 Background="White" 
