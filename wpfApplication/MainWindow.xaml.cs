@@ -15,6 +15,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Controls;
+using Image = System.Drawing.Image;
 
 namespace wpfApplication
 {
@@ -39,7 +40,7 @@ namespace wpfApplication
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new Content();
+            DataContext = new Content(this);
         }
 
         /// <summary>
@@ -79,7 +80,9 @@ namespace wpfApplication
         // Чтобы послать нотификацию о том, что свойство Image поменялось
         public class Content : INotifyPropertyChanged
         {
-            public Content()
+
+            private readonly MainWindow mw;
+            public Content(MainWindow mw)
             {
                 // Инициализация команды
                 openFileDialogCommand = new Command(ExecuteOpenFileDialog);
@@ -90,6 +93,7 @@ namespace wpfApplication
                     Filter =
                         "Image files (*.BMP, *.JPG, *.GIF, *.TIF, *.PNG, *.ICO, *.EMF, *.WMF)|*.bmp;*.jpg;*.gif; *.tif; *.png; *.ico; *.emf; *.wmf"
                 };
+                this.mw = mw;
             }
 
             readonly OpenFileDialog openFileDialog;
@@ -104,16 +108,18 @@ namespace wpfApplication
                 get { return openFileDialogCommand; }
             }
 
-            // Действие при нажатии на кнопку "Open File Dialog"
             void ExecuteOpenFileDialog()
             {
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    
+
                     string ImagePath1 = openFileDialog.FileName;
-                    string ImagePathNew = "C:\\Users\\Admin\\img.jpg";
+                    string ImagePathNew = "C:\\Users\\Denis\\img.jpg";
                     Mat img = Cv2.ImRead(ImagePath1);
                     Cv2.ImWrite(ImagePathNew, img);
+                    img = Cv2.ImRead(ImagePathNew);
+                    BitmapSource bitmapSource = img.ToBitmapSource();
+                    mw.Image_photoKerna.Source = bitmapSource;
 
                     using (var stream = new FileStream(ImagePathNew, FileMode.Open))
                     {
@@ -129,6 +135,9 @@ namespace wpfApplication
                 }
             }
 
+
+
+
             void RaisePropertyChanged(string propertyName)
             {
                 if (PropertyChanged != null)
@@ -136,8 +145,6 @@ namespace wpfApplication
             }
             // Реализация интерфейса INotifyPropertyChanged
             public event PropertyChangedEventHandler PropertyChanged;
-
-            
         }
 
 
@@ -273,8 +280,9 @@ namespace wpfApplication
         {
             Grid_main.Effect = new BlurEffect { Radius = 15 };
             LoadingGif.Visibility = Visibility.Visible;
+            Grid_main.IsEnabled = false;
 
-            string pythonScriptPath = @"C:\Users\Admin\source\repos\DenisDemin1\KernRecognize\wpfApplication\1.py"; // Укажите путь к вашему скрипту Python здесь
+            string pythonScriptPath = @"C:\\Users\\Denis\\source\\repos\\KernRecognize-master\\wpfApplication\\1.py"; // Укажите путь к вашему скрипту Python здесь
             // Путь к изображению
             //string imagePath = MyGlobals.ImagePath; // Укажите путь к вашему изображению здесь
             if (ImagePath != null)
@@ -305,13 +313,13 @@ namespace wpfApplication
 
                     LoadingGif.Visibility = Visibility.Hidden;
                     Grid_main.Effect = null; ;
+                    Grid_main.IsEnabled = true;
 
                     string csv_path = PREResult;
                     kernArray = KernParser.ParseKernsFromCsv(csv_path);
                     Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
                     BitmapSource bitmapSource = drawnImage.ToBitmapSource();
                     Image_photoKerna.Source = bitmapSource;
-
 
                     MessageBox.Show($"Успешно распознано");
                 }

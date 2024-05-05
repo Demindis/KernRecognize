@@ -38,8 +38,8 @@ def boxInResult(box_center, box_number):
 
 def recognize(img_path):
     reader = easyocr.Reader(['en'],
-                            model_storage_directory='C:/Users/Admin/.EasyOCR/model',
-                            user_network_directory='C:/Users/Admin/.EasyOCR/user_network',
+                            model_storage_directory='C:/Users/Denis/.EasyOCR/model',
+                            user_network_directory='C:/Users/Denis/.EasyOCR/user_network',
                             recog_network='custom_example', gpu=True)
 
     img = cv.imread(img_path)
