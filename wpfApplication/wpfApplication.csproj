@@ -124,6 +124,7 @@
     <Compile Include="RedImage.xaml.cs">
       <DependentUpon>RedImage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ZoomMoveImage.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
