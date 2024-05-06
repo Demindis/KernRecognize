@@ -9,8 +9,8 @@
         xmlns:text="clr-namespace:System.Text;assembly=mscorlib"
         xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
         Title="Приложение для распознавания номеров на образцах керна" 
-        Height="600" 
-        Width="1000" 
+        Height="1000" 
+        Width="1669" 
         WindowStartupLocation="CenterScreen" 
         FontFamily="Times New Roman" FontSize="22" 
         Visibility="Visible" 
@@ -24,55 +24,30 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Border MinWidth="400" Margin="20" Background="#00A876"/>
-            
+
             <Border x:Name="ImageContainer" 
+                MinWidth="400" 
                 Margin="20,20,20,79" 
                 Background="#00A876"
                 ClipToBounds="True">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Slider Grid.Column="0" Orientation="Vertical" 
-                        HorizontalAlignment="Left" Minimum="1"  x:Name="slider" SmallChange="0.05"/>
-                    <ScrollViewer Name="scrollViewer" Grid.Column="1" 
-                          VerticalScrollBarVisibility="Visible" 
-                          HorizontalScrollBarVisibility="Visible">
-
-                        <Grid Name="grid" Width="Auto" 
-                            Height="Auto" RenderTransformOrigin="0.5,0.5">
-                            <Grid.LayoutTransform>
-                                <TransformGroup>
-                                    <ScaleTransform x:Name="scaleTransform"/>
-                                    <TranslateTransform x:Name="translateTransform"/>
-                                </TransformGroup>
-                            </Grid.LayoutTransform>
-                            <Viewbox x:Name="viewBox" Grid.Column="0" Grid.Row="0" Stretch="Uniform">
-                                <Canvas x:Name="canDraw" Width="{Binding ElementName=grid, Path=ActualWidth}"
-                                    Height="{Binding ElementName=grid, Path=ActualHeight}"
-                                    MouseDown="canDraw_MouseDown">
-                                    <!--<Canvas.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform x:Name="ImageScaleTransform"/>
-                                            -->
-                                    <!--<TranslateTransform x:Name="ImageTranslateTransform"/>-->
-                                    <!--
-                                        </TransformGroup>
-                                    </Canvas.RenderTransform>-->
-                                    <Image x:Name="Image_photoKerna"
-                                        OpacityMask="White"
-                                        Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                        Width="{Binding ElementName=grid, Path=ActualWidth}"
-                                        Height="{Binding ElementName=grid, Path=ActualHeight}"
-                                        MouseLeftButtonDown="Image_MouseLeftButtonDown"  Stretch="Uniform"/>
-                                </Canvas>
-                            </Viewbox>
-                        </Grid>
-                    </ScrollViewer>
-                </Grid>
+                <Canvas x:Name="canDraw"
+                        RenderTransformOrigin="0.5,0.5" 
+                        MouseWheel="Image_photoKerna_MouseWheel"
+                        Height="604" Width="1113"
+                        MouseDown="canDraw_MouseDown">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="ImageScaleTransform" ScaleX="1" ScaleY="1"/>
+                            <TranslateTransform x:Name="ImageTranslateTransform"/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Image x:Name="Image_photoKerna"
+                   OpacityMask="White"
+                   Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                   MouseLeftButtonDown="Image_MouseLeftButtonDown" Height="604" Width="1113">
+                    </Image>
+                </Canvas>
             </Border>
-            
             <Button x:Name="PhotoFolder" 
                 Content="Выбрать фото" 
                 HorizontalAlignment="Left" 
