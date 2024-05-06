@@ -314,7 +314,7 @@ namespace wpfApplication
                     LoadingGif.Visibility = Visibility.Hidden;
                     Grid_main.Effect = null; ;
                     Grid_main.IsEnabled = true;
-
+                    //
                     string csv_path = PREResult;
                     kernArray = KernParser.ParseKernsFromCsv(csv_path);
                     Mat drawnImage = Drawing.Draw(ImagePath, kernArray);
