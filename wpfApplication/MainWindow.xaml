@@ -9,8 +9,8 @@
         xmlns:text="clr-namespace:System.Text;assembly=mscorlib"
         xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
         Title="Приложение для распознавания номеров на образцах керна" 
-        Height="1000" 
-        Width="1669" 
+        Height="600" 
+        Width="1000" 
         WindowStartupLocation="CenterScreen" 
         FontFamily="Times New Roman" FontSize="22" 
         Visibility="Visible" 
@@ -24,7 +24,55 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Border MinWidth="400" Margin="20" Background="#00A876"/>
+            
+            <Border x:Name="ImageContainer" 
+                Margin="20,20,20,79" 
+                Background="#00A876"
+                ClipToBounds="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider Grid.Column="0" Orientation="Vertical" 
+                        HorizontalAlignment="Left" Minimum="1"  x:Name="slider" SmallChange="0.05"/>
+                    <ScrollViewer Name="scrollViewer" Grid.Column="1" 
+                          VerticalScrollBarVisibility="Visible" 
+                          HorizontalScrollBarVisibility="Visible">
 
+                        <Grid Name="grid" Width="Auto" 
+                            Height="Auto" RenderTransformOrigin="0.5,0.5">
+                            <Grid.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform x:Name="scaleTransform"/>
+                                    <TranslateTransform x:Name="translateTransform"/>
+                                </TransformGroup>
+                            </Grid.LayoutTransform>
+                            <Viewbox x:Name="viewBox" Grid.Column="0" Grid.Row="0" Stretch="Uniform">
+                                <Canvas x:Name="canDraw" Width="{Binding ElementName=grid, Path=ActualWidth}"
+                                    Height="{Binding ElementName=grid, Path=ActualHeight}"
+                                    MouseDown="canDraw_MouseDown">
+                                    <!--<Canvas.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="ImageScaleTransform"/>
+                                            -->
+                                    <!--<TranslateTransform x:Name="ImageTranslateTransform"/>-->
+                                    <!--
+                                        </TransformGroup>
+                                    </Canvas.RenderTransform>-->
+                                    <Image x:Name="Image_photoKerna"
+                                        OpacityMask="White"
+                                        Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                        Width="{Binding ElementName=grid, Path=ActualWidth}"
+                                        Height="{Binding ElementName=grid, Path=ActualHeight}"
+                                        MouseLeftButtonDown="Image_MouseLeftButtonDown"  Stretch="Uniform"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+            
             <Button x:Name="PhotoFolder" 
                 Content="Выбрать фото" 
                 HorizontalAlignment="Left" 
@@ -53,33 +101,22 @@
             <Button x:Name="Button_addToExcelFile" 
                 Content="Выгрузить в таблицу в Excel"
                 HorizontalAlignment="Left" 
-                Margin="439,0,0,20.4" 
+                Margin="711,0,0,20" 
                 VerticalAlignment="Bottom" Width="272" 
                 Height="59" Background="#FF2EC799"
                 BorderBrush="#FF2EC799" 
                 FontSize="17" 
                 FontFamily="DM Sans 18pt 18pt Black" Click="Button_addToExcelFile_Click"/>
-            <Border x:Name="ImageContainer" 
-                MinWidth="400" 
-                Margin="30,42,38,97" 
-                Background="#00A876">
-
-                <Image x:Name="Image_photoKerna" 
-                   Margin="220,143,274,127"
-                   OpacityMask="White"
-                   Source="{Binding Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                   RenderTransformOrigin="0.5,0.5" 
-                   MouseWheel="Image_photoKerna_MouseWheel"
-                   MouseLeftButtonDown="Image_MouseLeftButtonDown"
-            >
-                    <Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="ImageScaleTransform"/>
-                        </TransformGroup>
-                    </Image.RenderTransform>
-                </Image>
-
-            </Border>
+            <Button x:Name="Button_add_Kern" 
+                Content="Добавить вручную"
+                HorizontalAlignment="Left" 
+                Margin="439,0,0,20" 
+                VerticalAlignment="Bottom" Width="272" 
+                Height="59" Background="#FF2EC799"
+                BorderBrush="#FF2EC799" 
+                FontSize="17" 
+                FontFamily="DM Sans 18pt 18pt Black" 
+                Click="Button_add_Kern_Click"/>
         </Grid>
         <Grid>
             <Image x:Name="LoadingGif"

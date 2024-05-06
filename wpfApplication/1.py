@@ -87,14 +87,18 @@ def recognize(img_path):
     return csv_data
 
 if __name__ == "__main__":
-    # Парсинг аргументов командной строки
-    parser = argparse.ArgumentParser()
-    parser.add_argument("image_path", help="Путь к изображению для распознавания")
-    args = parser.parse_args()
+    try:
+        # Парсинг аргументов командной строки
+        parser = argparse.ArgumentParser()
+        parser.add_argument("image_path", help="Путь к изображению для распознавания")
+        args = parser.parse_args()
 
-    # Вызов функции распознавания и генерации CSV
-    csv_data = recognize(args.image_path)
+        # Вызов функции распознавания и генерации CSV
+        csv_data = recognize(args.image_path)
 
-    # Вывод CSV данных в виде строк
-    for row in csv_data:
-        print(','.join(row))  # Печатаем каждую строку
+        # Вывод CSV данных в виде строк
+        for row in csv_data:
+            print(','.join(row))  # Печатаем каждую строку
+    except Exception as ex:
+        print(ex)
+    input()
