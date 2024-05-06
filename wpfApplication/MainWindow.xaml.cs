@@ -35,16 +35,12 @@ namespace wpfApplication
         public bool addFlag = false;
         private System.Windows.Shapes.Rectangle DragRectangle = null;
         private System.Windows.Point StartPoint, LastPoint;
-        private ZoomMoveImage moveImage;
+
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new Content(this);
-            moveImage = new ZoomMoveImage(scrollViewer, scaleTransform, slider);
-            //scrollViewer.ScrollChanged += moveImage.OnScrollViewerScrollChanged;
-            scrollViewer.PreviewMouseWheel += moveImage.OnPreviewMouseWheel;
-            slider.ValueChanged += moveImage.OnSliderValueChanged;
         }
 
         /// <summary>
@@ -152,70 +148,70 @@ namespace wpfApplication
         }
 
 
-        //// обработчик события MouseWheel
-        //private void Image_photoKerna_MouseWheel(object sender, MouseWheelEventArgs e)
-        //{
-        //    double scaleX = ImageScaleTransform.ScaleX;
-        //    double scaleY = ImageScaleTransform.ScaleY;
+        //обработчик события MouseWheel
+        private void Image_photoKerna_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            double scaleX = ImageScaleTransform.ScaleX;
+            double scaleY = ImageScaleTransform.ScaleY;
 
-        //    System.Windows.Point position = e.GetPosition(canDraw);
+            System.Windows.Point position = e.GetPosition(canDraw);
 
-        //    // Фактор изменения масштаба
-        //    double zoomFactor = 0.1;
+            // Фактор изменения масштаба
+            double zoomFactor = 0.1;
 
-        //    double minScale = 0.1;
-        //    //double maxScale = 2.5;
+            double minScale = 1;
+            double maxScale = 2.5;
 
-        //    // Уменьшаем масштаб при прокрутке колеса вниз и увеличиваем при прокрутке вверх
-        //    if (e.Delta > 0)
-        //    {
-        //        scaleX += zoomFactor;
-        //        scaleY += zoomFactor;
-        //    }
-        //    else
-        //    {
-        //        scaleX -= zoomFactor;
-        //        scaleY -= zoomFactor;
+            // Уменьшаем масштаб при прокрутке колеса вниз и увеличиваем при прокрутке вверх
+            if (e.Delta > 0)
+            {
+                scaleX += zoomFactor;
+                scaleY += zoomFactor;
+            }
+            else
+            {
+                scaleX -= zoomFactor;
+                scaleY -= zoomFactor;
 
-        //        // Определяем смещение для возврата к нулевой точке
-        //        double offsX = ImageTranslateTransform.X * 0.2;
-        //        double offsY = ImageTranslateTransform.Y * 0.2;
+                // Определяем смещение для возврата к нулевой точке
+                double offsX = ImageTranslateTransform.X * 0.2;
+                double offsY = ImageTranslateTransform.Y * 0.2;
 
-        //        // Применяем новое смещение
-        //        ImageTranslateTransform.X -= offsX;
-        //        ImageTranslateTransform.Y -= offsY;
-        //    }
+                // Применяем новое смещение
+                ImageTranslateTransform.X -= offsX;
+                ImageTranslateTransform.Y -= offsY;
+            }
 
-        //    // Ограничиваем минимальный и максимальный 
-        //    scaleX = Math.Max(scaleX, minScale);
-        //    scaleY = Math.Max(scaleY, minScale);
+            // Ограничиваем минимальный и максимальный 
+            scaleX = Math.Min(Math.Max(scaleX, minScale), maxScale);
+            scaleY = Math.Min(Math.Max(scaleY, minScale), maxScale);
 
-        //    // Определяем смещение для сохранения позиции курсора
-        //    double offsetX = (position.X - canDraw.ActualWidth / 2) * (scaleX - ImageScaleTransform.ScaleX);
-        //    double offsetY = (position.Y - canDraw.ActualHeight / 2) * (scaleY - ImageScaleTransform.ScaleY);
+            // Определяем смещение для сохранения позиции курсора
+            double offsetX = (position.X - canDraw.ActualWidth / 2) * (scaleX - ImageScaleTransform.ScaleX);
+            double offsetY = (position.Y - canDraw.ActualHeight / 2) * (scaleY - ImageScaleTransform.ScaleY);
 
-        //    if (e.Delta > 0)
-        //    {
-        //        // Применяем новый масштаб и смещение
-        //        ImageScaleTransform.ScaleX = scaleX;
-        //        ImageScaleTransform.ScaleY = scaleY;
-        //        ImageTranslateTransform.X -= offsetX;
-        //        ImageTranslateTransform.Y -= offsetY;
-        //    }
-        //    else
-        //    {
-        //        // Применяем новый масштаб
-        //        ImageScaleTransform.ScaleX = scaleX;
-        //        ImageScaleTransform.ScaleY = scaleY;
-        //    }
+            if (e.Delta > 0)
+            {
+                // Применяем новый масштаб и смещение
+                ImageScaleTransform.ScaleX = scaleX;
+                ImageScaleTransform.ScaleY = scaleY;
+                ImageTranslateTransform.X -= offsetX;
+                ImageTranslateTransform.Y -= offsetY;
+            }
+            else
+            {
+                // Применяем новый масштаб
+                ImageScaleTransform.ScaleX = scaleX;
+                ImageScaleTransform.ScaleY = scaleY;
+            }
 
-        //}
+        }
 
 
 
         private void PhotoFolder_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         public void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -234,9 +230,7 @@ namespace wpfApplication
 
                         X = (int)(pointsPosition.X / currentWidth * ImageWidth);
                         Y = (int)(pointsPosition.Y / currentHeight * ImageHeight);
-                        if (kernArray == null){
-                            return;
-                        }
+
                         int element = SearchId.BoxInResult(X, Y, kernArray);
 
                         if (element != -1)
@@ -316,7 +310,7 @@ namespace wpfApplication
 
                         }
                     }
-                    // 
+
                     LoadingGif.Visibility = Visibility.Hidden;
                     Grid_main.Effect = null; ;
                     Grid_main.IsEnabled = true;
@@ -346,7 +340,7 @@ namespace wpfApplication
                 return;
             }
         }
-        
+
         private void Button_addToExcelFile_Click(object sender, RoutedEventArgs e)
         {
             if (PREResult != null)
@@ -401,7 +395,7 @@ namespace wpfApplication
 
         private void canDraw_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(addFlag)
+            if (addFlag)
             {
                 StartPoint = Mouse.GetPosition(canDraw);
                 LastPoint = StartPoint;
