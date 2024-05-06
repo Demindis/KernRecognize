@@ -310,7 +310,7 @@ namespace wpfApplication
 
                         }
                     }
-
+                    // 
                     LoadingGif.Visibility = Visibility.Hidden;
                     Grid_main.Effect = null; ;
                     Grid_main.IsEnabled = true;
