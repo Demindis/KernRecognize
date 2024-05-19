@@ -17,6 +17,16 @@
         WindowStyle="ThreeDBorderWindow" 
         BorderThickness="0" 
         Icon="4480617-200.png">
+    <Window.Resources>
+        <Style x:Key="CustomButtonStyle" TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#FF2EC799"/>
+                    <Setter Property="BorderBrush" Value="#FF2EC799"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid x:Name="Grid_main" Background="#006D4C" Cursor="">
             <Grid.RowDefinitions>
@@ -49,6 +59,7 @@
                 </Canvas>
             </Border>
             <Button x:Name="PhotoFolder" 
+                    Style="{StaticResource CustomButtonStyle}"
                 Content="Выбрать фото" 
                 HorizontalAlignment="Left" 
                 Margin="20,0,0,20.4" 
@@ -63,6 +74,7 @@
                 Click="PhotoFolder_Click"
                 Command="{Binding OpenFileDialogCommand}"/>
             <Button x:Name="Button_detect" 
+                    Style="{StaticResource CustomButtonStyle}"
                 Content="Распознать номера" 
                 HorizontalAlignment="Left" 
                 Margin="229,0,0,20.4"
@@ -74,6 +86,7 @@
                 FontFamily="DM Sans 18pt 18pt Black" 
                 Cursor="Hand" Click="Button_detect_Click"/>
             <Button x:Name="Button_addToExcelFile" 
+                    Style="{StaticResource CustomButtonStyle}"
                 Content="Выгрузить в таблицу в Excel"
                 HorizontalAlignment="Left" 
                 Margin="711,0,0,20" 
@@ -82,7 +95,8 @@
                 BorderBrush="#FF2EC799" 
                 FontSize="17" 
                 FontFamily="DM Sans 18pt 18pt Black" Click="Button_addToExcelFile_Click"/>
-            <Button x:Name="Button_add_Kern" 
+            <Button x:Name="Button_add_Kern"
+                    Style="{StaticResource CustomButtonStyle}"
                 Content="Добавить вручную"
                 HorizontalAlignment="Left" 
                 Margin="439,0,0,20" 

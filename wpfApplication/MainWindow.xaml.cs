@@ -328,6 +328,9 @@ namespace wpfApplication
                     LoadingGif.Visibility = Visibility.Hidden;
                     Grid_main.Effect = null;
                     MessageBox.Show($"Ошибка распознавания: {ex.Message}");
+                    LoadingGif.Visibility = Visibility.Hidden;
+                    Grid_main.Effect = null; ;
+                    Grid_main.IsEnabled = true;
 
                 }
             }
@@ -337,6 +340,9 @@ namespace wpfApplication
                 Grid_main.Effect = null;
                 MessageBox.Show($"Ошибка, выберете фото", "Ошибка распозонавания", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                LoadingGif.Visibility = Visibility.Hidden;
+                Grid_main.Effect = null; ;
+                Grid_main.IsEnabled = true;
                 return;
             }
         }
