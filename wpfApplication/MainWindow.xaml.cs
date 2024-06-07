@@ -263,7 +263,6 @@ namespace wpfApplication
                             MessageBox.Show("Ошибка: элемент с таким значением не найден.");
                         }
                     }
-
                 }
                 catch
 
@@ -271,7 +270,6 @@ namespace wpfApplication
                     MessageBox.Show("Для редактирования значений выполните распознавание");
                 }
             }
-
         }
 
 
