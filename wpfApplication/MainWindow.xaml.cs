@@ -280,7 +280,7 @@ namespace wpfApplication
             LoadingGif.Visibility = Visibility.Visible;
             Grid_main.IsEnabled = false;
 
-            string pythonScriptPath = @"C:/Users/Denis/source/repos/KernRecognize/wpfApplication/1.py"; // Укажите путь к вашему скрипту Python здесь
+            string pythonScriptPath = @"C:\\Users\\Denis\\source\\repos\\KernRecognize-master\\wpfApplication\\1.py"; // Укажите путь к вашему скрипту Python здесь
             // Путь к изображению
             //string imagePath = MyGlobals.ImagePath; // Укажите путь к вашему изображению здесь
             if (ImagePath != null)
